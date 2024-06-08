@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "212479274416",
+    "project_id": "chat-app-23c89",
+    "storage_bucket": "chat-app-23c89.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212479274416:android:5882d59728e73c873cba75",
+        "android_client_info": {
+          "package_name": "lnmiit.prajwal.chatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwvmBwNgtUT6VpX68Miflm0GzNSaUT5Gs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
