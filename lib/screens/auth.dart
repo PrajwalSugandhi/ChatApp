@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -24,6 +25,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredPassword = '';
   File? _selectedImage;
   var _isAuthenticating = false;
+  var _enteredUsername = '';
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
@@ -56,6 +58,14 @@ class _AuthScreenState extends State<AuthScreen> {
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
 
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredentials.user!.uid)
+            .set({
+          'username': _enteredUsername,
+          'email': _enteredEmail,
+          'imageurl': imageUrl,
+        });
         print(userCredentials);
       }
     } on FirebaseAuthException catch (error) {
@@ -103,6 +113,23 @@ class _AuthScreenState extends State<AuthScreen> {
                               _selectedImage = pickedImage;
                             },
                           ),
+                        if (!_isLogin)
+                          TextFormField(
+                            decoration: InputDecoration(labelText: 'UserName'),
+                            enableSuggestions: false,
+                            textCapitalization: TextCapitalization.none,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  value.trim().length < 4) {
+                                return 'Username must be at least 4 characters long';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _enteredUsername = value!;
+                            },
+                          ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: 'Email Address'),
@@ -121,6 +148,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             _enteredEmail = value!;
                           },
                         ),
+
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Password'),
                           obscureText: true,
@@ -147,9 +175,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                       .colorScheme
                                       .primaryContainer),
                               child: Text(_isLogin ? 'Login' : 'Signup')),
-                        if(_isAuthenticating)
-                          CircularProgressIndicator();
-
+                        if (_isAuthenticating) CircularProgressIndicator(),
                         if (!_isAuthenticating)
                           TextButton(
                             onPressed: () {
