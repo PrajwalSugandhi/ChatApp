@@ -1,6 +1,9 @@
+import 'package:chatapp/widgets/user_image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -19,29 +22,50 @@ class _AuthScreenState extends State<AuthScreen> {
   final _form = GlobalKey<FormState>();
   var _enteredEmail = '';
   var _enteredPassword = '';
+  File? _selectedImage;
+  var _isAuthenticating = false;
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
+    if (!_isLogin && _selectedImage == null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Please select the image')));
+    }
     _form.currentState!.save();
-    try{
-      if(_isLogin){
-        final userCredentials = await _firebase.signInWithEmailAndPassword(email: _enteredEmail, password: _enteredPassword);
+    try {
+      setState(() {
+        _isAuthenticating = true;
+      });
+      if (_isLogin) {
+        final userCredentials = await _firebase.signInWithEmailAndPassword(
+            email: _enteredEmail, password: _enteredPassword);
         print(userCredentials);
-      }
-      else{
-          final userCredentials = await _firebase.createUserWithEmailAndPassword(
-              email: _enteredEmail, password: _enteredPassword);
-          print(userCredentials);
+      } else {
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+            email: _enteredEmail, password: _enteredPassword);
+
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${userCredentials.user!.uid}.jpg');
+
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+
+        print(userCredentials);
       }
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error.message ?? 'Authentication failed')));
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
-
   }
 
   @override
@@ -73,6 +97,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (!_isLogin)
+                          UserImagePicker(
+                            onPickImage: (pickedImage) {
+                              _selectedImage = pickedImage;
+                            },
+                          ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: 'Email Address'),
@@ -109,23 +139,28 @@ class _AuthScreenState extends State<AuthScreen> {
                           },
                         ),
                         SizedBox(height: 12),
-                        ElevatedButton(
-                            onPressed: _submit,
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer),
-                            child: Text(_isLogin ? 'Login' : 'Signup')),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLogin = !_isLogin;
-                            });
-                          },
-                          child: Text(_isLogin
-                              ? 'Create an account'
-                              : 'I already have an account'),
-                        ),
+                        if (!_isAuthenticating)
+                          ElevatedButton(
+                              onPressed: _submit,
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer),
+                              child: Text(_isLogin ? 'Login' : 'Signup')),
+                        if(_isAuthenticating)
+                          CircularProgressIndicator();
+
+                        if (!_isAuthenticating)
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = !_isLogin;
+                              });
+                            },
+                            child: Text(_isLogin
+                                ? 'Create an account'
+                                : 'I already have an account'),
+                          ),
                       ],
                     ),
                   ),
