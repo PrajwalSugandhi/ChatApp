@@ -49,16 +49,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               'Chat Room',
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                  },
-                  icon: Icon(
-                    Icons.exit_to_app,
-                    color: Theme.of(context).colorScheme.primary,
-                  ))
-            ],
           ),
           body: Column(
             children: [
@@ -71,28 +61,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               ),
               if (isShowEmoji)
                 EmojiPicker(
-                  // onEmojiSelected: (Category category, Emoji emoji) {
-                  //   // Do something when emoji is tapped (optional)
-                  // },
-                  // onBackspacePressed: () {
-                  //   // Do something when the user taps the backspace button (optional)
-                  //   // Set it to null to hide the Backspace-Button
-                  // },
                   textEditingController:
-                      _messageController, // pass here the same [TextEditingController] that is connected to your input field, usually a [TextFormField]
+                      _messageController,
                   config: const Config(
                     height: 256,
-                    // bgColor: const Color(0xFFF2F2F2),
-                    // checkPlatformCompatibility: true,
                     emojiViewConfig: EmojiViewConfig(
                       columns: 9,
                       emojiSizeMax: 28 * 1.0,
                     ),
-                    // swapCategoryAndBottomBar:  false,
-                    // skinToneConfig: const SkinToneConfig(),
-                    // categoryViewConfig: const CategoryViewConfig(),
-                    // bottomActionBarConfig: const BottomActionBarConfig(),
-                    // searchViewConfig: const SearchViewConfig(),
                   ),
                 )
             ],

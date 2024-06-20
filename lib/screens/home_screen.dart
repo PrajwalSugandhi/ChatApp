@@ -1,6 +1,6 @@
 import 'package:chatapp/screens/chatroom.dart';
 import 'package:chatapp/screens/chats.dart';
-import 'package:chatapp/screens/profile_screen.dart';
+import 'package:chatapp/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _activepage = ChatScreen();
     }
     else if(index == 1){
-      _activepage = ProfileScreen();
+      _activepage = SettingsScreen();
     }
   }
 
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _selectedPageIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Settings'),
         ],
       ),
     );
