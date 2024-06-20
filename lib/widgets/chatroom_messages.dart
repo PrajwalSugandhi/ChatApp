@@ -2,15 +2,39 @@ import 'package:chatapp/widgets/message_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ChatMessages extends StatelessWidget {
-  ChatMessages({super.key});
+class ChatRoomMessages extends StatefulWidget {
+  ChatRoomMessages({super.key});
+
+  @override
+  State<ChatRoomMessages> createState() => _ChatRoomMessagesState();
+}
+
+class _ChatRoomMessagesState extends State<ChatRoomMessages> {
+
+  void setupPushNotifications() async{
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    fcm.subscribeToTopic('chatroom');
+    // print(token);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setupPushNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
     final currentuser = FirebaseAuth.instance.currentUser!;
 
     return StreamBuilder(
@@ -54,7 +78,7 @@ class ChatMessages extends StatelessWidget {
                 final nextUserIsSame =
                     nextMessageUserId == currentMessageUserId;
                 final isMe = currentuser.uid == currentMessageUserId;
-                print(chatMessage);
+                // print(chatMessage);
                 if (nextUserIsSame) {
                   return MessageBubble.next(
                       message: chatMessage['text'], isMe: isMe);

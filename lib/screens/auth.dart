@@ -36,45 +36,48 @@ class _AuthScreenState extends State<AuthScreen> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Please select the image')));
-    }
-    _form.currentState!.save();
-    try {
-      setState(() {
-        _isAuthenticating = true;
-      });
-      if (_isLogin) {
-        final userCredentials = await _firebase.signInWithEmailAndPassword(
-            email: _enteredEmail, password: _enteredPassword);
-        print(userCredentials);
-      } else {
-        final userCredentials = await _firebase.createUserWithEmailAndPassword(
-            email: _enteredEmail, password: _enteredPassword);
-
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('user_images')
-            .child('${userCredentials.user!.uid}.jpg');
-
-        await storageRef.putFile(_selectedImage!);
-        final imageUrl = await storageRef.getDownloadURL();
-
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredentials.user!.uid)
-            .set({
-          'username': _enteredUsername,
-          'email': _enteredEmail,
-          'imageUrl': imageUrl,
+      FocusManager.instance.primaryFocus?.unfocus();
+    } else {
+      _form.currentState!.save();
+      try {
+        setState(() {
+          _isAuthenticating = true;
         });
-        print(userCredentials);
+        if (_isLogin) {
+          final userCredentials = await _firebase.signInWithEmailAndPassword(
+              email: _enteredEmail, password: _enteredPassword);
+          print(userCredentials);
+        } else {
+          final userCredentials =
+              await _firebase.createUserWithEmailAndPassword(
+                  email: _enteredEmail, password: _enteredPassword);
+
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child('user_images')
+              .child('${userCredentials.user!.uid}.jpg');
+
+          await storageRef.putFile(_selectedImage!);
+          final imageUrl = await storageRef.getDownloadURL();
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredentials.user!.uid)
+              .set({
+            'username': _enteredUsername,
+            'email': _enteredEmail,
+            'imageUrl': imageUrl,
+          });
+          // print(userCredentials);
+        }
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.message ?? 'Authentication failed')));
+        setState(() {
+          _isAuthenticating = false;
+        });
       }
-    } on FirebaseAuthException catch (error) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message ?? 'Authentication failed')));
-      setState(() {
-        _isAuthenticating = false;
-      });
     }
   }
 
@@ -148,7 +151,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             _enteredEmail = value!;
                           },
                         ),
-
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Password'),
                           obscureText: true,
@@ -181,6 +183,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             onPressed: () {
                               setState(() {
                                 _isLogin = !_isLogin;
+                                _form.currentState!.reset();
                               });
                             },
                             child: Text(_isLogin
