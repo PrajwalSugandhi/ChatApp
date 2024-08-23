@@ -1,16 +1,12 @@
-# chatapp
+# ChatterBox
 
-Chat app made using flutter and firebase to provide a platform for users to interact with each other
+ChatterBox is a real-time, one-on-one messaging application built with Flutter, Riverpod, Cloud Firestore, and Firebase. It offers a secure and reliable platform for users to connect, share text messages and images, and engage in seamless communication.
 
-## Getting Started
+## Key Features:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Secure Authentication**: Implements robust authentication protocols using Firebase Authentication to protect user data.
+- **Real-time Messaging:** Utilizes Firebase Cloud Firestore for efficient and scalable real-time messaging, ensuring a smooth user experience.
+- **Image Sharing:** Enables users to easily share images within conversations, enhancing communication and collaboration.
+- **User-Friendly Interface:** Designed with a clean and intuitive user interface for effortless navigation and interaction.
+- **Search Functionality:** Enables users to search for specific conversations, contacts, or messages within the app.
+- **Read Receipts:** Provides visual indicators to confirm when recipients have read messages.
