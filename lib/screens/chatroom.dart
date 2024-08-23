@@ -25,21 +25,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void changeEmoji() {
     setState(() {
-      if(!isShowEmoji){
+      if (!isShowEmoji) {
         FocusManager.instance.primaryFocus?.unfocus();
-      }
-      else{
+      } else {
         focusNode.requestFocus();
       }
       isShowEmoji = !isShowEmoji;
-
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -50,6 +48,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
+          backgroundColor: const Color.fromARGB(255, 234, 248, 255),
           body: Column(
             children: [
               Expanded(child: ChatRoomMessages()),
@@ -61,8 +60,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               ),
               if (isShowEmoji)
                 EmojiPicker(
-                  textEditingController:
-                      _messageController,
+                  textEditingController: _messageController,
                   config: const Config(
                     height: 256,
                     emojiViewConfig: EmojiViewConfig(

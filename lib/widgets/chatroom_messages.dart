@@ -14,23 +14,6 @@ class ChatRoomMessages extends StatefulWidget {
 }
 
 class _ChatRoomMessagesState extends State<ChatRoomMessages> {
-
-  void setupPushNotifications() async{
-    final fcm = FirebaseMessaging.instance;
-    await fcm.requestPermission();
-    final token = await fcm.getToken();
-    fcm.subscribeToTopic('chatroom');
-    // print(token);
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    setupPushNotifications();
-  }
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -89,8 +72,6 @@ class _ChatRoomMessagesState extends State<ChatRoomMessages> {
                       message: chatMessage['text'],
                       isMe: isMe);
                 }
-
-                return Text(loadedMessages[index].data()['text']);
               });
         });
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 class UserDetail extends StatelessWidget {
-  const UserDetail({super.key, required this.heading, required this.data, required this.iconData});
+
   final String heading;
   final String data;
   final IconData iconData;
-
-
+  UserDetail({super.key, required this.heading, required this.data, required this.iconData});
 
   @override
   Widget build(BuildContext context) {

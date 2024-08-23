@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../API/apis.dart';
+
 final _firebase = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
@@ -59,7 +61,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
           await storageRef.putFile(_selectedImage!);
           final imageUrl = await storageRef.getDownloadURL();
-
+          await APIs.createCloudUser(
+              _enteredUsername, _enteredEmail, imageUrl, userCredentials);
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userCredentials.user!.uid)

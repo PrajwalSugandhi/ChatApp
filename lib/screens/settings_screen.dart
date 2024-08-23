@@ -35,7 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final String image = getImageURL();
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.only(top: 30),
@@ -55,7 +54,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Account',
             iconName: Icons.person,
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountScreen()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AccountScreen()));
             },
           ),
           Divider(

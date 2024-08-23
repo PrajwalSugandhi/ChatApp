@@ -1,3 +1,4 @@
+import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/widgets/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,16 +15,20 @@ class _AccountScreenState extends State<AccountScreen> {
   var image;
   var emailID;
   var username;
+  var abouts;
+  late ChatUser userdetail;
+  bool _showProgress = true;
 
   void getData() async {
-    final data = await FirebaseFirestore.instance
-        .collection('users')
+    await FirebaseFirestore.instance
+        .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    setState(() {
-      emailID = data['email'];
-      username = data['username'];
-      image = data['imageUrl'];
+        .get()
+        .then((user) {
+      userdetail = ChatUser.fromJson(user.data()!);
+      setState(() {
+        _showProgress = false;
+      });
     });
   }
 
@@ -36,39 +41,44 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print(emailID);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: emailID == null ? Center(child: CircularProgressIndicator()) : Padding(
+      body: _showProgress == true
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
               padding: const EdgeInsets.only(top: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(image),
+                      backgroundImage: NetworkImage(userdetail.image),
                       radius: 100,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   UserDetail(
                       heading: 'Username',
-                      data: username,
+                      data: userdetail.name,
                       iconData: Icons.person),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   UserDetail(
                       heading: 'Email ID',
-                      data: emailID,
+                      data: userdetail.email,
                       iconData: Icons.email),
-                  // SizedBox(height: 10,),
-                  // UserDetail(heading: 'Username', data: 'Prajwal', iconData: Icons.person),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  UserDetail(
+                      heading: 'About',
+                      data: userdetail.about,
+                      iconData: Icons.error),
                 ],
               ),
             ),
